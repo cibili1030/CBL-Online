@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @font-face {
+            font-family: 'PixelChinese';
+            src: url('fonts/HYPixel11pxU-2.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #B1D6F0;
+            font-family: 'PixelChinese', sans-serif;
+        }
+
+        .nav {
+            background-color: #5AA3E7;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            background-color: #5AA3E7;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .button {
+            width: 80px;
+            text-align: center;
+            line-height: 80px;
+            font-family: 'PixelChinese';
+            font-size: 18px;
+            font-weight: 800;
+            background-color: #5AA3E7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .button:hover {
+            color: azure;
+            font-size: 20px;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: azure;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover::after {
+            transform: scaleX(1);
+        }
+
+        .button a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .banner {
+            width: 100%;
+            display: block;
+            transform: scaleY(0.75);
+            /* 压缩到80%高度 */
+            transform-origin: bottom;
+            /* 关键修改：抵消变换后的空白 */
+            margin-top: -85px;
+        }
+
+        .pixel-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #5AA3E7;
+            image-rendering: pixelated;
+            border-radius: 2px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* 新增留言区样式 */
+        .message-container {
+            width: 90%;
+            margin: 48px auto;
+            padding: 60px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            border: 4px solid #5AA3E7;
+            box-shadow:
+                0 0 0 2px #fff,
+                4px 4px 0 0 #5AA3E7,
+                8px 8px 0 0 #B1D6F0;
+            transition: transform 0.3s ease;
+        }
+
+        .tips-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .tips p {
+            font-size: 18px;
+            line-height: 30px;
+        }
+
+        .message-title {
+            font-size: 26px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+        .message-form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'PixelChinese', sans-serif;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .submit-button {
+            background-color: #5AA3E7;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'PixelChinese', sans-serif;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: #3a87d3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img class="logo" src="首页素材/nav左.png" alt="" width="200px" height="60px">
+        <div class="button"><a href="主页.html">首页</a></div>
+        <div class="button"><a href="档案馆.html">档案馆</a></div>
+        <div class="button"><a href="音乐盒.html">音乐盒</a></div>
+        <div class="button"><a href="日记簿.html">日记簿</a></div>
+        <div class="button"><a href="追星手记.html">追星手记</a></div>
+        <div class="button"><a href="秘密基地.html">秘密基地</a></div>
+    </div>
+    <video class="banner" autoplay muted loop playsinline>
+        <source src="秘密基地素材\banner.mp4" type="video/mp4">
+    </video>
+    <!-- 新增留言区 -->
+    <div class="message-container">
+        <h2 class="message-title">树洞留声机</h2>
+        <div class="tips">
+            <div class="tips-title"><span class="pixel-dot"></span>tips
+            </div>
+            <p>Hi，欢迎来到陈冰凌的秘密基地，我是这里的守护者--树洞留声机。
+                如果你有什么心事，或者秘密，又或者有想要分享的喜悦，都可以悄悄告诉我。
+                不论任何情绪，只要你想说，我都会在这里认真听。你不必要告诉我你是谁，我会永远是你忠实的心声倾听者和秘密守护者~</p>
+        </div>
+        <form class="message-form">
+            <div class="form-group">
+                <label for="username"><span class="pixel-dot"></span>昵称</label>
+                <input type="text" id="username" placeholder="怎么称呼你？">
+            </div>
+            <div class="form-group">
+                <label for="message"><span class="pixel-dot"></span>想说的话</label>
+                <textarea id="message" placeholder="分享你的想法..."></textarea>
+            </div>
+            <button type="button" class="submit-button" onclick="submitMessage()">发送</button>
+        </form>
+    </div>
+
+    <script>
+        function submitMessage() {
+            const username = document.getElementById('username').value;
+            const message = document.getElementById('message').value;
+
+            if (username && message) {
+                alert('留言已发送！感谢你的分享~');
+                document.getElementById('username').value = '';
+                document.getElementById('message').value = '';
+            } else {
+                alert('请填写昵称和留言内容');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日记簿</title>
+    <style>
+        @font-face {
+            font-family: 'PixelChinese';
+            src: url('fonts/HYPixel11pxU-2.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #B1D6F0;
+            font-family: 'PixelChinese', sans-serif;
+        }
+
+        .nav {
+            background-color: #5AA3E7;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            background-color: #5AA3E7;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .button {
+            width: 80px;
+            text-align: center;
+            line-height: 80px;
+            font-family: 'PixelChinese';
+            font-size: 18px;
+            font-weight: 800;
+            background-color: #5AA3E7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .button:hover {
+            color: azure;
+            font-size: 20px;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: azure;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover::after {
+            transform: scaleX(1);
+        }
+
+        .button a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+        .banner {
+            width: 100%;
+            display: block;
+            transform: scaleY(0.75);
+            /* 压缩到80%高度 */
+            transform-origin: bottom;
+            /* 关键修改：抵消变换后的空白 */
+            margin-top: -85px;
+        }
+
+        .diary-section {
+            width: 90%;
+            max-width: 1200px;
+            margin: 48px auto;
+            padding: 32px;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 0 2px #fff, 4px 4px 0 0 #5AA3E7, 8px 8px 0 0 #B1D6F0;
+        }
+
+        .diary-title {
+            font-family: 'PixelChinese', sans-serif;
+            font-size: 26px;
+            color: #5AA3E7;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pixel-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #5AA3E7;
+            image-rendering: pixelated;
+            border-radius: 2px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .diary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .diary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding: 24px;
+            background: #fafdff;
+            border: 3px solid #5AA3E7;
+            border-radius: 8px;
+            box-shadow: 2px 2px 0 #B1D6F0;
+            transition: transform 0.3s ease;
+        }
+
+        .diary-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 0 #B1D6F0;
+        }
+
+        .diary-time {
+            text-align: center;
+            padding: 12px;
+            background: #fff;
+            border-radius: 6px;
+        }
+
+        .diary-time .date {
+            font-size: 20px;
+            color: #5AA3E7;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .diary-time .time {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .diary-content {
+            flex: 1;
+        }
+
+        .diary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .diary-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #5AA3E7;
+            box-shadow: 2px 2px 0 #B1D6F0;
+        }
+
+        .diary-author {
+            font-size: 18px;
+            color: #5AA3E7;
+            font-weight: bold;
+        }
+
+        .diary-text {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .diary-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .diary-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid #5AA3E7;
+            box-shadow: 2px 2px 0 #B1D6F0;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .diary-image:hover {
+            transform: scale(1.05);
+        }
+
+        .diary-footer {
+            display: flex;
+            gap: 24px;
+            color: #666;
+            font-size: 14px;
+            justify-content: end;
+        }
+
+        .diary-action {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .diary-action:hover {
+            color: #5AA3E7;
+        }
+
+        .diary-action i {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img class="logo" src="首页素材/nav左.png" alt="" width="200px" height="60px">
+        <div class="button"><a href="主页.html">首页</a></div>
+        <div class="button"><a href="档案馆.html">档案馆</a></div>
+        <div class="button"><a href="音乐盒.html">音乐盒</a></div>
+        <div class="button"><a href="日记簿.html">日记簿</a></div>
+        <div class="button"><a href="追星手记.html">追星手记</a></div>
+        <div class="button"><a href="秘密基地.html">秘密基地</a></div>
+    </div>
+    <video class="banner" autoplay muted loop playsinline>
+        <source src="日记簿素材/banner视频.mp4" type="video/mp4">
+    </video>
+
+    <div class="diary-section">
+        <div class="diary-title">
+            <span class="pixel-dot"></span>
+            我的日记
+        </div>
+        <div class="diary-list">
+            <div class="diary-item">
+                <div class="diary-time">
+                    <div class="date">2025.04.27</div>
+                    <div class="time">15:30</div>
+                </div>
+                <div class="diary-content">
+                    <div class="diary-header">
+                        <img class="diary-avatar" src="日记簿素材/头像.jpeg" alt="头像">
+                        <div class="diary-author">陈冰凌</div>
+                    </div>
+                    <div class="diary-text">
+                        「2022年高三的某一個雨天 mp3裡偶然播到的《雨天》 就這樣有感而發地写进日記 也就這樣一直循环着陪伴了我整個青春<br>
+                        是书裡陳見夏和凌翔茜在补习班下课的傍晚耳机里一起听的《The Moment》<br>
+                        是高中下課傍晚跑步時 和好朋友们幻想著有一天要在海邊一起唱的《第一天》<br>
+                        是16岁那年克服恐惧站在好多人面前顫抖著唱出的《克卜勒》<br>
+                        是初中傍晚回家路上車載音箱裡一遍又一遍聽著的《尚好的青春》和《我的愛》<br>
+                        是6岁時第一次用音乐软件听到的 带来音樂啟蒙的《直來直往》和《綠光》<br>
+                        是無數流淚和傷痛的夜晚陪伴我的《我懷念的》和《我不難過》<br>
+                        是讓現在的 此時此刻的我 可以平靜面對生活和未來的《我要的幸福》和《逃亡》<br>
+                        每一首歌 每一個年歲的孫燕姿 构成了每一个不同樣子的我 而這些所有的我 都在這個晚上重逢<br>
+                        每一幀過去在眼前绽放又转瞬即逝 終於流下幸福的眼泪 我的青春终于画上句号<br>
+                        “这一刻，<br>
+                        时间变成行李，<br>
+                        越过生命悲喜，<br>
+                        陪伴着我前进。”<br>
+                        放心离开我 道別是為了延續回忆永恆的华丽.<br>
+                        謝謝上海 謝謝燕姿 謝謝這個 永葆着流泪天赋的真摯熱忱的我<br>
+                        ———写于2025.4.27」<br>
+                    </div>
+                    <div class="diary-images">
+                        <img class="diary-image" src="日记簿素材/第一条1.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第一条2.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第一条3.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第一条4.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第一条5.jpg" alt="照片">
+                    </div>
+                    <div class="diary-footer">
+                        <div class="diary-action">
+                            <i>❤</i>
+                            <span>喜欢</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>💬</i>
+                            <span>评论</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>↗</i>
+                            <span>分享</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="diary-item">
+                <div class="diary-time">
+                    <div class="date">2025.04.9</div>
+                    <div class="time">1:19</div>
+                </div>
+                <div class="diary-content">
+                    <div class="diary-header">
+                        <img class="diary-avatar" src="日记簿素材/头像.jpeg" alt="头像">
+                        <div class="diary-author">陈冰凌</div>
+                    </div>
+                    <div class="diary-text">
+                        你不需要任何的附加品<br>
+                        你已经可以靠你自己证明你的价值了<br>
+                    </div>
+                    <div class="diary-footer">
+                        <div class="diary-action">
+                            <i>❤</i>
+                            <span>喜欢</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>💬</i>
+                            <span>评论</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>↗</i>
+                            <span>分享</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="diary-item">
+                <div class="diary-time">
+                    <div class="date">2024.04.06</div>
+                    <div class="time">00：47</div>
+                </div>
+                <div class="diary-content">
+                    <div class="diary-header">
+                        <img class="diary-avatar" src="日记簿素材/头像.jpeg" alt="头像">
+                        <div class="diary-author">陈冰凌</div>
+                    </div>
+                    <div class="diary-text">
+                        幸福和春天同时降临.
+                    </div>
+                    <div class="diary-images">
+                        <img class="diary-image" src="日记簿素材/第二条1.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第二条2.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第二条3.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第二条4.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第二条5.jpg" alt="照片">
+                    </div>
+                    <div class="diary-footer">
+                        <div class="diary-action">
+                            <i>❤</i>
+                            <span>喜欢</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>💬</i>
+                            <span>评论</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>↗</i>
+                            <span>分享</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="diary-item">
+                <div class="diary-time">
+                    <div class="date">2025.03.13</div>
+                    <div class="time">00:09</div>
+                </div>
+                <div class="diary-content">
+                    <div class="diary-header">
+                        <img class="diary-avatar" src="日记簿素材/头像.jpeg" alt="头像">
+                        <div class="diary-author">陈冰凌</div>
+                    </div>
+                    <div class="diary-text">
+                        到了花开的季节 人们的目光往往只向着那些鲜艳的花投去<br>
+                        而其余的绿色却被默认成了背景<br>
+                        事实上 越是常见的东西越不被人珍惜<br>
+                        越是熟视无睹的东西就越显得普通<br>
+                        但它们也是珍贵的生命 是顽强向上的生命 不是么？<br>
+                    </div>
+                    <div class="diary-footer">
+                        <div class="diary-action">
+                            <i>❤</i>
+                            <span>喜欢</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>💬</i>
+                            <span>评论</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>↗</i>
+                            <span>分享</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="diary-item">
+                <div class="diary-time">
+                    <div class="date">2025.03.8</div>
+                    <div class="time">00:19</div>
+                </div>
+                <div class="diary-content">
+                    <div class="diary-header">
+                        <img class="diary-avatar" src="日记簿素材/头像.jpeg" alt="头像">
+                        <div class="diary-author">陈冰凌</div>
+                    </div>
+                    <div class="diary-text">
+                        人们总是为喜怒哀乐而束缚<br>
+                        而文字、歌声就是情绪的萤火虫<br>
+                        即使是最伤痛最消极的那些<br>
+                        也可以化作美好的荧光<br>
+                        人的灵魂也许正是因为经历过爱与痛<br>
+                        才可以创造出更伟大的肉体<br>
+                        才可以看见更丰富的世界<br>
+                    </div>
+                    <div class="diary-footer">
+                        <div class="diary-action">
+                            <i>❤</i>
+                            <span>喜欢</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>💬</i>
+                            <span>评论</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>↗</i>
+                            <span>分享</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="diary-item">
+                <div class="diary-time">
+                    <div class="date">2025.03.16</div>
+                    <div class="time">16：51</div>
+                </div>
+                <div class="diary-content">
+                    <div class="diary-header">
+                        <img class="diary-avatar" src="日记簿素材/头像.jpeg" alt="头像">
+                        <div class="diary-author">陈冰凌</div>
+                    </div>
+                    <div class="diary-text">
+                        「空氣像青蘋果 公車開滿花朵.」
+                    </div>
+                    <div class="diary-images">
+                        <img class="diary-image" src="日记簿素材/第三条1.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第三条2.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第三条3.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第三条4.jpg" alt="照片">
+                        <img class="diary-image" src="日记簿素材/第三条5.jpg" alt="照片">
+                    </div>
+                    <div class="diary-footer">
+                        <div class="diary-action">
+                            <i>❤</i>
+                            <span>喜欢</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>💬</i>
+                            <span>评论</span>
+                        </div>
+                        <div class="diary-action">
+                            <i>↗</i>
+                            <span>分享</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

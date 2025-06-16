@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐盒</title>
+    <style>
+        @font-face {
+            font-family: 'PixelChinese';
+            src: url('fonts/HYPixel11pxU-2.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #B1D6F0;
+            font-family: 'PixelChinese', sans-serif;
+        }
+
+        .nav {
+            background-color: #5AA3E7;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            background-color: #5AA3E7;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .button {
+            width: 80px;
+            text-align: center;
+            line-height: 80px;
+            font-family: 'PixelChinese';
+            font-size: 18px;
+            font-weight: 800;
+            background-color: #5AA3E7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .button:hover {
+            color: azure;
+            font-size: 20px;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: azure;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover::after {
+            transform: scaleX(1);
+        }
+
+        .button a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .banner {
+            width: 100%;
+            display: block;
+            margin: 80px auto;
+            display: block;
+            transform: scaleY(0.75);
+            /* 压缩到80%高度 */
+            transform-origin: bottom;
+            /* 关键修改：抵消变换后的空白 */
+            margin-top: -90px;
+        }
+
+
+
+        .box {
+            width: 90%;
+            margin: 18px auto 48px auto;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 0 2px #fff, 4px 4px 0 0 #5AA3E7, 8px 8px 0 0 #B1D6F0;
+            padding: 32px 32px 24px 32px;
+
+        }
+
+        .title {
+            font-family: PixelChinese;
+            font-size: 26px;
+            color: black;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-list {
+            display: flex;
+            flex-direction: row;
+            gap: 32px;
+
+        }
+
+        .radio-box {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            background: #fafdff;
+            border: 3px solid #5AA3E7;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 #B1D6F0;
+            margin: 0 0 0 0;
+            padding: 24px 30px;
+            gap: 32px;
+
+        }
+
+        .radio-imgbox {
+            width: 100%;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 0 2px #fff, 4px 4px 0 0 #5AA3E7, 8px 8px 0 0 #B1D6F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+        }
+
+        .radio-imgbox img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 1px 1px 0 #B1D6F0;
+        }
+
+        .radio-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .radio-info-title {
+            font-size: 26px;
+            color: #5AA3E7;
+            font-family: PixelChinese;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .songlist {
+            line-height: 30px;
+            font-family: PixelChinese;
+            color: #333;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            margin: 0 auto;
+        }
+
+        .songlist:hover {
+            color: #5AA3E7;
+        }
+
+        .pixel-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #5AA3E7;
+            image-rendering: pixelated;
+            border-radius: 2px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .lyrics-section {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            margin-top: 24px;
+        }
+
+        .lyrics-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .lyrics-img {
+            width: 200px;
+            height: 300px;
+            object-fit: cover;
+            border: 4px solid #5AA3E7;
+            border-radius: 8px;
+            box-shadow: 0 0 0 2px #fff, 4px 4px 0 0 #5AA3E7, 8px 8px 0 0 #B1D6F0;
+            position: relative;
+            margin: 10px 30px;
+            background: #fff;
+        }
+
+        .lyrics-textbox {
+            flex: 1;
+            background: #fff;
+            border: 3px solid #5AA3E7;
+            border-radius: 8px;
+            box-shadow: 2px 2px 0 #B1D6F0;
+            padding: 24px 60px;
+            font-family: PixelChinese;
+            font-size: 16px;
+            color: #333;
+            min-height: 100px;
+            position: relative;
+            margin: 10px 30px 10px 18px;
+        }
+
+        .lyrics-textbox p {
+            margin: 0;
+            line-height: 30px;
+        }
+
+        .top15-section {
+            width: 90%;
+            margin: 48px auto;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 0 2px #fff, 4px 4px 0 0 #5AA3E7, 8px 8px 0 0 #B1D6F0;
+            padding: 32px 32px 24px 32px;
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .carousel {
+            width: 1200px;
+            /* 5*200+4*20 */
+            max-width: 100vw;
+            margin: 0 auto;
+            height: 300px;
+            position: relative;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-item {
+            flex: 0 0 200px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            transform-origin: center center;
+        }
+
+        /* 第一个和第五个位置 */
+        .carousel-item.pos-1,
+        .carousel-item.pos-5 {
+            transform: scale(0.8);
+            opacity: 0.7;
+        }
+
+        /* 第二个和第四个位置 */
+        .carousel-item.pos-2,
+        .carousel-item.pos-4 {
+            transform: scale(0.9);
+            opacity: 0.85;
+        }
+
+        /* 第三个位置（中间） */
+        .carousel-item.pos-3 {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .album-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 0 2px #fff, 4px 4px 0 0 #5AA3E7, 8px 8px 0 0 #B1D6F0;
+            transition: all 0.3s ease;
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 0 2px #fff, 6px 6px 0 0 #5AA3E7, 12px 12px 0 0 #B1D6F0;
+        }
+
+        .album-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .album-info {
+            padding: 12px;
+            background: #fafdff;
+            border-top: 3px solid #5AA3E7;
+        }
+
+        .album-info h3 {
+            font-family: 'PixelChinese', sans-serif;
+            font-size: 16px;
+            color: #5AA3E7;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .album-info p {
+            font-family: 'PixelChinese', sans-serif;
+            font-size: 12px;
+            color: #666;
+            margin: 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .carousel-button {
+            background: #5AA3E7;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 2px #fff, 2px 2px 0 0 #5AA3E7;
+            z-index: 3;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .carousel-button.prev {
+            left: 0;
+        }
+
+        .carousel-button.next {
+            right: 0;
+        }
+
+        .carousel-button:hover {
+            background: #4A93D7;
+            transform: scale(1.1);
+        }
+
+        .carousel-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img class="logo" src="首页素材/nav左.png" alt="" width="200px" height="60px">
+        <div class="button"><a href="主页.html">首页</a></div>
+        <div class="button"><a href="档案.html">档案</a></div>
+        <div class="button"><a href="音乐盒.html">音乐盒</a></div>
+        <div class="button"><a href="日记簿.html">日记簿</a></div>
+        <div class="button"><a href="追星手记.html">追星手记</a></div>
+        <div class="button"><a href="秘密基地.html">秘密基地</a></div>
+    </div>
+    <video class="banner" autoplay muted playsinline>
+        <source src="音乐盒素材/音乐盒头图特效.mp4" type="video/mp4">
+    </video>
+    <div class="top15-section">
+        <div class="title"><span class="pixel-dot"></span>TOP15</div>
+        <div class="carousel-container">
+            <button class="carousel-button prev">❮</button>
+            <div class="carousel">
+                <div class="carousel-track">
+                    <div class="carousel-item"></div>
+                    <div class="carousel-item"></div>
+                    <div class="carousel-item"></div>
+                    <div class="carousel-item"></div>
+                    <div class="carousel-item"></div>
+                </div>
+            </div>
+            <button class="carousel-button next">❯</button>
+        </div>
+    </div>
+    <div class="box">
+        <div class="title"><span class="pixel-dot"></span>情绪电台</div>
+        <div class="radio-list">
+            <div class="radio-box">
+                <div class="radio-imgbox">
+                    <img <img src="音乐盒素材/emo.jpeg" alt="emo情绪">
+                </div>
+                <div class="radio-info">
+                    <div class="radio-info-title">EMOing</div>
+                    <div class="radio-songlist">
+                        <a class="songlist" href="https://music.163.com/#/song?id=1388999464" target="_blank">
+                            <p>太空人-吴青峰</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=474932825" target="_blank">
+                            <p>Quit-Cashmere Cat / Ariana
+                                Grande</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=287398" target="_blank">
+                            <p>我不难过-孙燕姿</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=563999356" target="_blank">
+                            <p>Never
+                                Not-Lauv</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1932627926" target="_blank">
+                            <p>挚友-黄丽玲</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=563999351" target="_blank">
+                            <p>The Story
+                                Never
+                                Ends-Lauv</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1957782399" target="_blank">
+                            <p>我想到你就再也不怕-徐佳莹</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="radio-box">
+                <div class="radio-imgbox">
+                    <img src="音乐盒素材/悠闲.jpeg" alt="悠闲情绪">
+                </div>
+                <div class="radio-info">
+                    <div class="radio-info-title">悠闲ing</div>
+                    <div class="radio-songlist">
+                        <a class="songlist" href="https://music.163.com/#/song?id=430208791" target="_blank">
+                            <p>彩虹金刚-孙燕姿</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1408122638" target="_blank">
+                            <p>一天-Yellow黄宣</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=287248" target="_blank">
+                            <p>第一天-孙燕姿</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=2008017517" target="_blank">
+                            <p>Ditto-New
+                                Jeans</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1386175484" target="_blank">
+                            <p>对的时间点-林俊杰</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=19292852" target="_blank">
+                            <p>Enchanted-Taylor
+                                Swift</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1333352696" target="_blank">
+                            <p>华生-陈绮贞</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="radio-box">
+                <div class="radio-imgbox">
+                    <img src="音乐盒素材/动感.jpeg" alt="动感情绪">
+                </div>
+                <div class="radio-info">
+                    <div class="radio-info-title">动感ing</div>
+                    <div class="radio-songlist">
+                        <a class="songlist" href=" https://music.163.com/#/song?id=2630157725" target="_blank">
+                            <p>Steady-NCTWISH</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1321442069" target="_blank">
+                            <p>La Vie en
+                                Rose-IZ*ONE</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1959667345" target="_blank">
+                            <p>给你一瓶魔法药水-告五人</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=2007351317" target="_blank">
+                            <p>Candy-NCT
+                                DREAM</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=2094057556" target="_blank">
+                            <p>南京恋爱通告-银河快递</p>
+                        </a>
+                        <a class="songlist" href="https://music.163.com/#/song?id=1481688591" target="_blank">
+                            <p>星河-温和治疗(MILDCURE)</p>
+                        </a>
+                        <a class="songlist" href="https://www.bilibili.com/video/av114431132441945/" target="_blank">
+                            <p>Love
+                                Language-TOMORROW X TOGETHER</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="title"><span class="pixel-dot"></span>歌词本</div>
+        <div class="lyrics-section">
+            <div class="lyrics-item">
+                <a href="https://music.163.com/#/song?id=573168769" target="_blank"><img class="lyrics-img"
+                        src="音乐盒素材/歌词本1.jpg" alt="歌词本1"></a>
+                <div class="lyrics-textbox">
+                    <p>情人不爱你 还不爱你 凭什么否定你</p>
+                    <p>月光有人捞起 有人瞧不起</p>
+                    <p>被爱概率 如宇宙 阴森诡祕</p>
+                    <p>无法主宰那些</p>
+                    <p>谁那么蠢与它斗气</p>
+                    <p style="float: right;">--容祖儿《心之科学》</p>
+                </div>
+            </div>
+            <div class="lyrics-item">
+                <a href="https://music.163.com/#/song?id=386691" target="_blank"><img class="lyrics-img"
+                        src="音乐盒素材/歌词本2.jpg" alt="歌词本2"></a>
+                <div class="lyrics-textbox">
+                    <p>天长和地久的尽头</p>
+                    <p>应该没有人能抢走我永远的感动</p>
+                    <p>总要有一首我的歌大声唱过喔</p>
+                    <p>再看天地辽阔</p>
+                    <p>活着不多不少幸福刚好够用</p>
+                    <p>活着其实很好再吃一颗苹果</p>
+                    <p style="float: right;">--五月天《一颗苹果》</p>
+                </div>
+            </div>
+            <div class="lyrics-item">
+                <a href="https://music.163.com/#/song?id=525112245" target="_blank"><img class="lyrics-img"
+                        src="音乐盒素材/歌词本3.jpg" alt="歌词本3"></a>
+                <div class="lyrics-textbox">
+                    <p>When the sharpest words wanna cut me down,</p>
+                    <p>哪怕人们尖酸刻薄的言语不休，</p>
+                    <p>Gonna send a flood, gonna drown them out,</p>
+                    <p>我会用内心的洪流将其淹没席卷，</p>
+                    <p>I am brave, I am bruised,</p>
+                    <p>我勇猛果敢 绝不轻易妥协，</p>
+                    <p>I am who I'm meant to be, this is me,</p>
+                    <p>我会扼住自己命运的咽喉 这就是我。</p>
+                    <p style="float: right;">--Kesha《This Is Me》</p>
+                </div>
+            </div>
+            <div class="lyrics-item">
+                <a href="https://music.163.com/#/song?id=1355916092" target="_blank"><img class="lyrics-img"
+                        src="音乐盒素材/歌词本4.jpg" alt="歌词本4"></a>
+                <div class="lyrics-textbox">
+                    <p>너와 함께라서 환하게，</p>
+                    <p>因为与你一起，</p>
+                    <p>빛나는 꿈을 꿔 오늘도，</p>
+                    <p>今天也做着闪耀着光芒的梦。</p>
+                    <p>우리 함께라면 언제나 빛날 수 있어 Forever，</p>
+                    <p>若是我们在一起 无论何时都会绽放光芒 Forever。</p>
+                    <p style="float: right;">--IZ*ONE《Really Like You》</p>
+                </div>
+            </div>
+            <div class="lyrics-item">
+                <a href="https://music.163.com/#/song?id=209115" target="_blank"><img class="lyrics-img"
+                        src="音乐盒素材/歌词本5.jpg" alt="歌词本5"></a>
+                <div class="lyrics-textbox">
+                    <p>如果有一个世界浑浊的不像话</p>
+                    <p>我会疯狂地爱上</p>
+                    <p>如果有一个怀抱勇敢不计代价</p>
+                    <p>别让我飞 将我温柔豢养</p>
+                    <p>原谅我飞 曾经眷恋太阳</p>
+                    <p style="float: right;">--陈绮贞《鱼》</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const albums = [
+                { img: "音乐盒素材/Imaginary Friends.jpeg", name: "Imaginary Friend", artist: "ITZY", times: "1004" },
+                { img: "音乐盒素材/当夜晚来临.jpeg", name: "当夜晚来临", artist: "Eddy Kim", times: "903" },
+                { img: "音乐盒素材/power.jpeg", name: "power", artist: "EXO", times: "290" },
+                { img: "音乐盒素材/红.jpeg", name: "红", artist: "罗言", times: "266" },
+                { img: "音乐盒素材/克卜勒.jpeg", name: "克卜勒", artist: "孙燕姿", times: "260" },
+                { img: "音乐盒素材/wannabe.jpeg", name: "WANNABE", artist: "ITZY", times: "258" },
+                { img: "音乐盒素材/DOMINO、.jpeg", name: "DOMINO", artist: "ITZY", times: "246" },
+                { img: "音乐盒素材/love me like you do.jpeg", name: "love me like you do", artist: "Ellie Goulding", times: "213" },
+                { img: "音乐盒素材/当你.jpeg", name: "当你", artist: "林俊杰", times: "203" },
+                { img: "音乐盒素材/Dancing with a stranger.jpeg", name: "Dancing with a stranger", artist: "Sam Smith/Normani", times: "185" },
+                { img: "音乐盒素材/隐形人.jpeg", name: "隐形人", artist: "孙燕姿", times: "182" },
+                { img: "音乐盒素材/事件的地平线.jpeg", name: "事件的地平线", artist: "YOUNHA", times: "170" },
+                { img: "音乐盒素材/ANGEL.jpeg", name: "ANGEL", artist: "尹美莱/Tiger", times: "167" },
+                { img: "音乐盒素材/The moment.jpeg", name: "The moment", artist: "孙燕姿", times: "161" },
+                { img: "音乐盒素材/夜的尽头.jpeg", name: "夜的尽头", artist: "邓紫棋", times: "157" }
+            ];
+            const total = albums.length;
+            let currentIndex = 0; // 中间最大div对应的专辑索引
+
+            const track = document.querySelector('.carousel-track');
+            const items = track.querySelectorAll('.carousel-item');
+            const prevButton = document.querySelector('.carousel-button.prev');
+            const nextButton = document.querySelector('.carousel-button.next');
+
+            function renderCarousel() {
+                for (let i = 0; i < 5; i++) {
+                    // 计算专辑索引，保证循环
+                    const albumIndex = (currentIndex - 2 + i + total) % total;
+                    const album = albums[albumIndex];
+                    items[i].innerHTML = `
+                        <div class="album-card">
+                            <img src="${album.img}" alt="${album.name}">
+                            <div class="album-info">
+                                <h3>${album.name}</h3>
+                                <p>${album.artist}</p>
+                                <p>${album.times}</p>
+                            </div>
+                        </div>
+                    `;
+                    // 清除所有pos类
+                    items[i].className = 'carousel-item';
+                    // 添加对应的pos类
+                    items[i].classList.add(`pos-${i + 1}`);
+                }
+            }
+
+            prevButton.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + total) % total;
+                renderCarousel();
+            });
+
+            nextButton.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % total;
+                renderCarousel();
+            });
+
+            // 初始化
+            renderCarousel();
+
+            // 键盘支持
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevButton.click();
+                if (e.key === 'ArrowRight') nextButton.click();
+            });
+        });
+    </script>
+</body>
+
+</html>

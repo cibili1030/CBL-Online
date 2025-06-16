@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主页</title>
+    <style>
+        @font-face {
+            font-family: 'PixelChinese';
+            src: url('fonts/HYPixel11pxU-2.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #B1D6F0;
+            font-family: 'PixelChinese', sans-serif;
+        }
+
+        .nav {
+            background-color: #5AA3E7;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            background-color: #5AA3E7;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .button {
+            width: 80px;
+            text-align: center;
+            line-height: 80px;
+            font-family: 'PixelChinese';
+            font-size: 18px;
+            font-weight: 800;
+            background-color: #5AA3E7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .button:hover {
+            color: azure;
+            font-size: 20px;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: azure;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover::after {
+            transform: scaleX(1);
+        }
+
+        .button a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .banner {
+            width: 100%;
+            display: block;
+            transform: scaleY(0.75);
+            /* 压缩到80%高度 */
+            transform-origin: bottom;
+            /* 关键修改：抵消变换后的空白 */
+            margin-top: -80px;
+        }
+
+
+        .box1 {
+            margin: 40px auto;
+            width: 90%;
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
+        }
+
+        .box1 .leftbox {
+            width: 30%;
+            border: 4px solid #5AA3E7;
+            border-radius: 4px;
+            padding: 20px;
+            background-color: white;
+            box-shadow:
+                0 0 0 2px #fff,
+                4px 4px 0 0 #5AA3E7,
+                8px 8px 0 0 #B1D6F0;
+            transition: transform 0.3s ease;
+        }
+
+        .face {
+            margin: 30px auto;
+            display: block;
+            width: 60%;
+            border-radius: 50%;
+            border: 5px dashed #5AA3E7;
+            transition: transform 0.3s ease;
+        }
+
+        .face:hover {
+            transform: scale(1.05);
+        }
+
+        .leftbox p {
+            line-height: 50px;
+            font-size: 17px;
+            font-family: PixelChinese;
+            background-color: white;
+            padding: 0 10px;
+        }
+
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .rightbox {
+            flex: 1;
+            background-color: white;
+            border: 4px solid #5AA3E7;
+            border-radius: 4px;
+            padding: 30px;
+            box-shadow:
+                0 0 0 2px #fff,
+                4px 4px 0 0 #5AA3E7,
+                8px 8px 0 0 #B1D6F0;
+            height: 320px;
+            margin-bottom: 0;
+        }
+
+        .profile {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            height: 50px;
+        }
+
+        .profile .symbol {
+            width: 50px;
+            height: 50px;
+        }
+
+        .pixel-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #5AA3E7;
+            image-rendering: pixelated;
+            border-radius: 2px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .rightbox h2 {
+            font-family: PixelChinese;
+            font-size: 30px;
+            color: #5AA3E7;
+            margin-bottom: 20px;
+            font-style: italic;
+            text-shadow: 2px 2px 2px silver;
+
+        }
+
+        .rightbox img {
+            height: 100px;
+
+        }
+
+        .photo-row {
+            display: flex;
+            flex-direction: row;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .photo-row img {
+            height: 200px;
+            width: auto;
+            border-radius: 8px;
+            box-shadow: 2px 2px 6px #b1d6f088;
+        }
+
+        .carousel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        .carousel-btn {
+            width: 32px;
+            height: 32px;
+            background: #5AA3E7;
+            color: #fff;
+            font-size: 22px;
+            font-family: PixelChinese;
+            border: 3px solid #222;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #B1D6F0;
+            transition: background 0.2s;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-btn:active {
+            background: #3a7bbd;
+        }
+
+        .carousel-photos {
+            display: flex;
+            gap: 18px;
+            overflow: hidden;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .carousel-photos img {
+            height: 200px;
+            width: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 2px 2px 6px #b1d6f088;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img class="logo" src="首页素材/nav左.png" alt="" width="200px" height="60px">
+        <div class="button"><a href="主页.html">首页</a></div>
+        <div class="button"><a href="档案馆.html">档案馆</a></div>
+        <div class="button"><a href="音乐盒.html">音乐盒</a></div>
+        <div class="button"><a href="日记簿.html">日记簿</a></div>
+        <div class="button"><a href="追星手记.html">追星手记</a></div>
+        <div class="button"><a href="秘密基地.html">秘密基地</a></div>
+    </div>
+    <video class="banner" autoplay muted loop playsinline>
+        <source src="首页素材/下载.mp4" type="video/mp4">
+    </video>
+    <div class="box1">
+        <div class="leftbox">
+            <img class="face" src="首页素材/首页证件照.jpeg" alt="">
+            <div class="profile">
+                <img class="symbol" src="首页素材/profiletub/姓名.png" alt="">
+                <p>姓名：陈冰凌</p>
+            </div>
+            <div class="profile">
+                <img class="symbol" src="首页素材/profiletub/性别.png" alt="">
+                <p>性别：女</p>
+            </div>
+            <div class="profile">
+                <img class="symbol" src="首页素材/profiletub/生日.png" alt="">
+                <p>生日：2004.10.30</p>
+            </div>
+            <div class="profile">
+                <img class="symbol" src="首页素材/profiletub/mbti.png" alt="">
+                <p>mbti：ISFJ</p>
+            </div>
+            <div class="profile">
+                <img class="symbol" src="首页素材/profiletub/星座.png" alt="">
+                <p>星座：天蝎座</p>
+            </div>
+            <div class="profile">
+                <img class="symbol" src="首页素材/profiletub/籍贯.png" alt="">
+                <p>籍贯：福建</p>
+            </div>
+            <div class="profile">
+                <img class="symbol" src="首页素材/profiletub/爱好.png" alt="">
+                <p>爱好：音乐、写作、旅行</p>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="rightbox">
+                <h2>
+                    <span class="pixel-dot"></span>
+                    关于我
+                </h2>
+                <p
+                    style="font-size: 20px; line-height: 2; color: #333; font-family: PixelChinese; text-indent: 2em;position: relative;">
+                    Hi，我是陈冰凌，一名211计科专业在读大二学生，一个在数字与创意交织世界里探索的前行者，来自中南财经政法大学。专业上，我用代码搭建理想框架，以创意点亮学术之路，参与过多个项目，在具体成果中不断锤炼技术与思维。生活里，我是音乐的忠实拥趸，在旅行中寻找灵感，热衷探索文学世界，相信知识的跨界融合能碰撞出奇妙火花。期待和你相遇！
+                </p>
+            </div>
+            <div class="rightbox">
+                <h2><span class="pixel-dot"></span>相册</h2>
+                <div class="carousel">
+                    <button class="carousel-btn" id="prevBtn">&#8592;</button>
+                    <div class="carousel-photos" id="carouselPhotos">
+                        <img src="写真1.jpg" alt="">
+                        <img src="写真2.jpg" alt="">
+                        <img src="写真3.jpg" alt="">
+                        <img src="写真4.jpg" alt="">
+                    </div>
+                    <button class="carousel-btn" id="nextBtn">&#8594;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 轮播功能
+        const photoList = [
+            '首页·相册/写真1.jpg',
+            '首页·相册/写真2.jpg',
+            '首页·相册/写真3.jpg',
+            '首页·相册/写真4.jpg',
+            '首页·相册/写真5.jpg',
+            '首页·相册/写真6.jpg',
+            '首页·相册/写真7.jpg',
+            '首页·相册/写真8.jpg',
+            '首页·相册/写真9.jpg',
+            '首页·相册/写真10.jpg',
+            '首页·相册/写真11.jpg',
+            '首页·相册/写真12.jpg',
+            '首页·相册/写真13.jpg',
+            '首页·相册/写真14.jpg',
+            '首页·相册/写真15.jpg',
+            '首页·相册/写真16.jpg',
+            '首页·相册/写真17.jpg',
+            '首页·相册/写真18.jpg',
+            '首页·相册/写真19.jpg',
+        ];
+        let startIdx = 0;
+        const showCount = 4;
+        const carouselPhotos = document.getElementById('carouselPhotos');
+        document.getElementById('prevBtn').onclick = function () {
+            startIdx = (startIdx - 1 + photoList.length) % photoList.length;
+            renderPhotos();
+        };
+        document.getElementById('nextBtn').onclick = function () {
+            startIdx = (startIdx + 1) % photoList.length;
+            renderPhotos();
+        };
+        function renderPhotos() {
+            let html = '';
+            for (let i = 0; i < showCount; i++) {
+                const idx = (startIdx + i) % photoList.length;
+                html += `<img src="${photoList[idx]}" alt="">`;
+            }
+            carouselPhotos.innerHTML = html;
+        }
+        // 初始化
+        renderPhotos();
+    </script>
+</body>
+
+</html>

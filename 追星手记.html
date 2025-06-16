@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>追星手记</title>
+    <style>
+        @font-face {
+            font-family: 'PixelChinese';
+            src: url('fonts/HYPixel11pxU-2.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #B1D6F0;
+            font-family: 'PixelChinese', sans-serif;
+        }
+
+        .nav {
+            background-color: #5AA3E7;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            background-color: #5AA3E7;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .button {
+            width: 80px;
+            text-align: center;
+            line-height: 80px;
+            font-family: 'PixelChinese';
+            font-size: 18px;
+            font-weight: 800;
+            background-color: #5AA3E7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .button:hover {
+            color: azure;
+            font-size: 20px;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: azure;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover::after {
+            transform: scaleX(1);
+        }
+
+        .button a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .banner {
+            width: 100%;
+            display: block;
+            transform: scaleY(0.75);
+            /* 压缩到80%高度 */
+            transform-origin: bottom;
+            /* 关键修改：抵消变换后的空白 */
+            margin-top: -85px;
+        }
+
+        .box {
+            width: 90%;
+            margin: 48px auto;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0 0 2px #fff, 4px 4px 0 0 #5AA3E7, 8px 8px 0 0 #B1D6F0;
+            padding: 32px 32px 24px 32px;
+
+        }
+
+        .title {
+            font-family: PixelChinese;
+            font-size: 26px;
+            color: black;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pixel-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #5AA3E7;
+            image-rendering: pixelated;
+            border-radius: 2px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* 明星导航照片样式 */
+        .star-nav {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+
+        .star-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid #5AA3E7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 0 #B1D6F0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .star-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .star-photo:hover {
+            transform: translateY(-8px);
+            box-shadow: 8px 8px 0 #B1D6F0;
+            border-color: #3a8bd7;
+        }
+
+        .star-photo.active {
+            border-color: #FFCD56;
+            transform: scale(1.05);
+        }
+
+        .star-name {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: 'PixelChinese';
+            font-size: 18px;
+            color: #5AA3E7;
+        }
+
+        /* 明星详情内容样式 */
+        .star-content {
+            width: 90%;
+            display: none;
+            margin: 100px auto;
+            padding: 48px;
+            border-radius: 12px;
+            background-color: #fafdff;
+            border: 3px solid #5AA3E7;
+            box-shadow: 4px 4px 0 #B1D6F0;
+        }
+
+        .star-content.active {
+            display: block;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content-header h2 {
+            font-family: 'PixelChinese';
+            font-size: 24px;
+            color: #5AA3E7;
+            margin-right: 15px;
+        }
+
+        .content-tag {
+            background-color: #5AA3E7;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .content-details {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        .left {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .detail-photo {
+            width: 100%;
+            height: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #5AA3E7;
+            box-shadow: 3px 3px 0 #B1D6F0;
+        }
+
+        .detail-photo img {
+            width: 100%;
+            display: block;
+        }
+
+        .detail-info p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .detail-stats {
+            margin-top: 20px;
+            display: grid;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            background-color: #e6f2ff;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #5AA3E7;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            color: #5AA3E7;
+            margin-bottom: 5px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .nav {
+                height: 60px;
+            }
+
+            .button {
+                width: 60px;
+                line-height: 60px;
+                font-size: 14px;
+            }
+
+            .button:hover {
+                font-size: 16px;
+            }
+
+            .logo {
+                width: 150px;
+                height: 45px;
+            }
+
+            .star-photo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .star-name {
+                font-size: 14px;
+                bottom: -25px;
+            }
+
+            .content-details {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img class="logo" src="首页素材/nav左.png" alt="" width="200px" height="60px">
+        <div class="button"><a href="主页.html">首页</a></div>
+        <div class="button"><a href="档案馆.html">档案馆</a></div>
+        <div class="button"><a href="音乐盒.html">音乐盒</a></div>
+        <div class="button"><a href="日记簿.html">日记簿</a></div>
+        <div class="button"><a href="追星手记.html">追星手记</a></div>
+        <div class="button"><a href="秘密基地.html">秘密基地</a></div>
+    </div>
+    <video class="banner" autoplay muted loop playsinline>
+        <source src="追星日常素材\banner.mp4" type="video/mp4">
+    </video>
+    <div class="box">
+        <div class="title"><span class="pixel-dot"></span>My Idols</div>
+        <!-- 明星导航照片 -->
+        <div class="star-nav">
+            <div class="star-photo active" data-star="star1">
+                <img src="追星日常素材\blackpink导航图.jpeg" alt="照片">
+                <div class="star-name">BLACKPINK</div>
+            </div>
+            <div class="star-photo" data-star="star2">
+                <img src="追星日常素材\itzy导航图.jpeg" alt="照片">
+                <div class="star-name">ITZY</div>
+            </div>
+            <div class="star-photo" data-star="star3">
+                <img src="追星日常素材\安宥真导航图.jpeg" alt="照片">
+                <div class="star-name">安宥真</div>
+            </div>
+        </div>
+
+        <!-- 明星详情内容 -->
+        <div id="star1" class="star-content active">
+            <div class="content-header">
+                <h2>BLACKPINK</h2>
+                <span class="content-tag">韩国女子音乐组合</span>
+            </div>
+            <div class="content-details">
+                <div class="left">
+                    <div class="detail-photo">
+                        <img src="追星日常素材\blackpink介绍图.jpg" alt="详细照片">
+                    </div>
+                    <div class="detail-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">别称</div>
+                            <div>粉墨</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">粉丝名</div>
+                            <div>BLINK</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">曲数</div>
+                            <div>30</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-info">
+                    <p>BLACKPINK（블랙핑크），韩国女子唱跳组合，2016年8月8日由YG
+                        Entertainment推出，由金智秀（JISOO）、金珍妮（JENNIE）、朴彩英（ROSÉ）、LISA四名成员组成。组合名“BLACKPINK”在看起来很美的粉色中稍微加入了否定的意义，旨在传达出“不要只看漂亮的部分”、“看到的并不是全部”的意思。
+                    </p>
+                    <p>2016年8月8日，发行首张单曲专辑《SQUARE
+                        ONE》并正式出道，《WHISTLE》在八个音乐网站周排行榜冠军，是首个以出道曲创下该纪录的女团；11月1日，发行第二张单曲专辑《SQUARE
+                        TWO》
+                        。2017年6月22日，发布单曲《As If It’s Your Last》。2018年6月15日，发行首张迷你专辑《SQUARE
+                        UP》；10月25日，发行与杜阿·利帕的合作单曲《Kiss
+                        and Make Up》
+                        ，组合之后凭借该曲成为第一个获得BRIT白银单曲认证的K-Pop组合。2019年4月5日，发行第二张迷你专辑《KILL THIS LOVE》。</p>
+                    <p>2020年8月28日，与赛琳娜·戈麦斯合作发行《Ice Cream》 [139]，该曲刷新了K-pop女团在Billboard Hot 100的记录；8月30日，凭借《How You
+                        Like
+                        That》获第37届MTV音乐录影带大奖“夏日歌曲奖” ；10月2日，发行第一张正规专辑《THE ALBUM》。2022年9月16日，发行第二张正规专辑《BORN PINK》
+                        ，凭借此专辑成为登上美国Billboard 200和英国官方专辑排行榜榜首的首位亚洲女艺人；12月5日，被《时代周刊》评选为年度艺人。2023年7月31日，《DDU-DU
+                        DDU-DU》MV
+                        YouTube点击量突破21亿，创下K-pop组合MV最高记录；12月，组合所有成员均完成了续约。</p>
+                </div>
+            </div>
+        </div>
+        <div id="star2" class="star-content">
+            <div class="content-header">
+                <h2>ITZY</h2>
+                <span class="content-tag">韩国女子演唱组合</span>
+            </div>
+            <div class="content-details">
+                <div class="left">
+                    <div class="detail-photo">
+                        <img src="追星日常素材\itzy介绍图.jpg" alt="详细照片">
+                    </div>
+                    <div class="detail-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">别名</div>
+                            <div>一击、击、梯</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">粉丝名</div>
+                            <div>MIDZY</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">曲数</div>
+                            <div>50</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-info">
+                    <p>ITZY（있지）是JYP Entertainment于2019年2月12日推出的韩国女子演唱组合，
+                        由黄礼志（Yeji）、崔智秀（Lia）、申留真（Ryujin）、李彩领（Chaeryeong）、申有娜（Yuna）五位成员组成。
+                        团名ITZY的韩文为“有（있지）”之意，意思是“你们想要的我们全都有吗？有的！”（EVERYTHING YOU WANT IT’Z IN US ITZY？ITZY！）</p>
+                    <p>2019年1月21日，JYP公司发布视频，正式公开组合名称ITZY；2月12日，发行首张单曲专辑《IT'z Different》，从而正式出道；21日，凭借《DALLA
+                        DALLA》在音乐节目《M！
+                        Countdown》中夺下出道以来首个第一名宝座，以仅出道9天的时间刷新了韩女团初次一位的最快纪录；7月29日，发行首张迷你专辑《IT'z
+                        ICY》。2020年3月9日，发行第二张迷你专辑《IT'z ME》
+                        ；8月17日，发行第三张迷你专辑《Not Shy》。2021年4月30日，发行第四张迷你专辑《GUESS WHO》；9月24日，发行首张正规专辑《CRAZY IN LOVE》。
+                    </p>
+                    <p>2022年4月6日，发行首张日文单曲专辑《Voltage》 ；7月15日，发行第五张迷你专辑《CHECKMATE》；11月30日，发行第六张迷你专辑《CHESHIRE》
+                        。2023年10月18日，在发行首张日文专辑《RINGO》，专辑共收录11首曲目。2024年1月8日，发行第八张迷你专辑《BORN TO BE》；10月15日，发行专辑《GOLD》
+                        ；12月，参加《2024 MUSIC BANK GLOBAL FESTIVAL in JAPAN》。2025年6月9日，ITZY以迷你九辑《Girls will be
+                        Girls》强势回归，正在进行如火如荼的宣传和打歌行程当中。
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div id="star3" class="star-content">
+            <div class="content-header">
+                <h2>安宥真</h2>
+                <span class="content-tag">韩国女歌手</span>
+            </div>
+            <div class="content-details">
+                <div class="left">
+                    <div class="detail-photo">
+                        <img src="追星日常素材\安宥真介绍图.jpg" alt="详细照片">
+                    </div>
+                    <div class="detail-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">别名</div>
+                            <div>安叮叮、popo、芙1、矮5</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">粉丝名</div>
+                            <div>REALLY</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">身高</div>
+                            <div>174cm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-info">
+                    <p>安宥真（안유진/アン・ユジン/An YuJin），2003年9月1日出生于韩国大田市，韩国女歌手，韩国女子演唱组合IVE队长。</p>
+                    <p>2018年4月，参加音乐选秀节目《PRODUCE
+                        48》。6月，在节目总决赛中获得第5名，成为限定组合IZ*ONE成员，并以该组合成员身份进行为期2年半的活动。10月，IZ*ONE首部团体综艺节目《IZ*ONECHU》首播；同月，随组合发行首张迷你专辑《COLOR*IZ》，正式出道。2019年2月，随组合发行日文单曲《想要你说喜欢我》，在日本出道
+                        。4月，随组合发行第二张迷你专辑《HEART*IZ》。6月，随组合发行第三张迷你专辑《Buenos
+                        Aires》。9月25日，发行第三张日文单曲专辑《Vampire》，同时，凭借该专辑的销量夺得了公信榜单曲销量冠军。
+                        2021年3月7日，开始担任SBS《人气歌谣》MC；3月14日，参与组合的IZ*ONE团体在线上演唱会上，正式宣布解散</p>
+                    <p>2月1日，加入韩国女子演唱组合IVE，随组合凭借首张单曲专辑《ELEVEN》正式出道；2022年4月5日，随组合IVE发行第二张单曲专辑《LOVE
+                        DIVE》，主打曲为同名单曲《LOVE DIVE》获得2022年MAMA颁奖典礼年度歌曲大赏；2月22日至6月7日，作为MC出演《钢铁部队2》；6月18日，担任第28届Dream
+                        Concert的MC；6月20日，与金妍儿、姜丹尼尔发行合作歌曲《MOVE LIKE THIS》；6月24日至9月16日，固定出演《Biong
+                        Biong地球游戏厅》。2023年4月10日，随组合发行首张正规专辑《I've IVE》。2024年5月，在第60届百想艺术大赏中获得PRIZM人气奖
+                        。2025年4月8日，安宥真为电视剧《总有一天机智的住院医生生活》演唱OST《Sunny Day》。</p>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="star3" class="star-content">
+        <div class="content-header">
+            <h2>苏晚晴</h2>
+            <span class="content-tag">主唱/门面</span>
+        </div>
+        <div class="content-details">
+            <div class="detail-photo">
+                <img src="追星日常素材/idol3.jpg" alt="苏晚晴详细照片">
+            </div>
+            <div class="detail-info">
+                <p>苏晚晴是女子组合的队长和主唱，以甜美的外形和极具穿透力的嗓音成为组合的人气担当。她拥有出色的歌唱实力和舞台表现力，无论是抒情歌曲还是动感舞曲，都能完美驾驭。</p>
+                <p>自出道以来，苏晚晴随组合多次登上国际舞台，用精彩的表演赢得了全球粉丝的喜爱。她不仅在音乐方面表现出色，还积极参与公益活动，担任多个公益项目的形象大使，用自己的影响力传递爱与希望。</p>
+                <p>苏晚晴的粉丝们被她的才华和善良所打动，纷纷以"晴空"自称，表达对她的支持和喜爱。她与粉丝之间的互动温馨而感人，经常通过社交媒体和线下活动与粉丝分享生活中的点滴。</p>
+
+                <div class="detail-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">出生日期</div>
+                        <div>1999年10月5日</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">出生地</div>
+                        <div>广州</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">身高</div>
+                        <div>170cm</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">爱好</div>
+                        <div>唱歌、绘画、瑜伽</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // 明星导航切换功能
+        document.addEventListener('DOMContentLoaded', function () {
+            const starPhotos = document.querySelectorAll('.star-photo');
+            const starContents = document.querySelectorAll('.star-content');
+
+            starPhotos.forEach(photo => {
+                photo.addEventListener('click', function () {
+                    // 移除所有激活状态
+                    starPhotos.forEach(p => p.classList.remove('active'));
+                    starContents.forEach(c => c.classList.remove('active'));
+
+                    // 添加当前激活状态
+                    this.classList.add('active');
+                    const starId = this.getAttribute('data-star');
+                    document.getElementById(starId).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
